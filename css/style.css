@@ -1,0 +1,60 @@
+.tstr-main {
+    padding: 5px;
+    background-color: #333333;
+    border-radius: 5px;
+}
+
+.tstr-stream {
+    height:110px;
+    width: 100%;
+    font-size: 1.5rem;
+    font-family: "Arial Black", Gadget, sans-serif;
+    letter-spacing: initial;
+    text-align: initial;
+}
+
+.tstr-stream:not(:last-child){
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-color: #393939;
+}
+
+.tstr-image {
+    height: calc( 100% - 8px );
+    float: left;
+    margin: 3px;
+    box-sizing: content-box;
+    border-color: #999999;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.tstr-midinfo {
+    height: 100%;
+    float: inline-start;
+    padding-top: 0.4em;
+    width: 50%;
+}
+
+.tstr-title {
+    width: 100%;
+    display: inline-block;
+    line-height: 1em;
+    max-height: 2em;
+    overflow: hidden;
+    color: #eeeeee;
+}
+
+.tstr-username {
+    max-height: 1em;
+    width: 100%;
+    overflow: hidden;
+    color: #666666;
+}
+
+.tstr-viewers {
+    color: #eeeeee;
+    float: right;
+    margin: 6px 6px 0 0;
+}
