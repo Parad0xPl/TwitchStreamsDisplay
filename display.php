@@ -5,7 +5,7 @@ if(!function_exists("do_action")){
     exit;
 }
 
-require_once("twitch_api.php");
+require_once("connector.php");
 
 if(!class_exists("TwitchStreams_Display")){
     class TwitchStreams_Display {
@@ -55,21 +55,10 @@ if(!class_exists("TwitchStreams_Display")){
         </div>';
     
         static public function renderer(){
-            $twitch = TwitchStreams_TwitchAPI::get();
             
             $template = self::mainTemplate;
             
-            $streams = get_transient(self::cache_key);
-            if($streams === false){
-                $channels = explode(",", get_option("twitchstreams_channels"));
-                $response = $twitch->streams($channels);
-                if($response === null){
-                    return "Can't get streams";
-                }
-                $streams = $response["data"];
-                set_transient(self::cache_key, $streams, 10);
-            }
-            
+            $streams = TwitchStreams_Connector::streams(get_option("twitchstreams_channels"));
             return sprintf($template, print_r($streams ,TRUE), self::renderStreams($streams));
         }
     }
