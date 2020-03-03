@@ -79,7 +79,16 @@ if(!class_exists("TwitchStreams_TwitchAPI")){
                 throw new Error("Users needs to be an array");
             }
             return $this->request("/streams", array(
-                // "user_login" => $users
+                "user_login" => $users
+            ));
+        }
+
+        public function users($users){
+            if(!is_array($users)){
+                throw new Error("Users needs to be an array");
+            }
+            return $this->request("/users", array(
+                "login" => $users
             ));
         }
     }

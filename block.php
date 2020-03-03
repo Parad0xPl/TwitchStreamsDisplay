@@ -11,24 +11,18 @@ class TwitchStreams_Block {
 
 	private const cache_key = "twitchstreams_streams";
 
-	static private function renderStream($stream){
-		// $template = '
-		// <div class="tstr-stream">
-		// 	<img src="$img" class="tstr-image">
-		// 	<span class="tstr-title">$title</span>
-		// 	<span class="tstr-username">$username</span>
-		// 	<div class="tstr-viewers">$viewers</div>
-		// </div>';
+	const streamTemplate = '
+	<div class="tstr-stream">
+		<img src="$img" class="tstr-image">
+		<div class="tstr-midinfo">
+			<span class="tstr-title">$title</span><br>
+			<span class="tstr-username">$username</span>
+		</div>
+		<div class="tstr-viewers">$viewers</div>
+	</div>';
 
-		$template = '
-		<div class="tstr-stream">
-			<img src="$img" class="tstr-image">
-			<div class="tstr-midinfo">
-				<span class="tstr-title">$title</span><br>
-				<span class="tstr-username">$username</span>
-			</div>
-			<div class="tstr-viewers">$viewers</div>
-		</div>';
+	static private function renderStream($stream){
+		$template = self::streamTemplate;
 
 		$imgurl = strtr($stream["thumbnail_url"], array(
 			'{width}' => '192',
@@ -36,8 +30,8 @@ class TwitchStreams_Block {
 		));
 
 		return strtr($template, array(
-			'$username' => $stream['user_name'],
-			'$title' => $stream['title'],
+			'$username' => htmlspecialchars($stream['user_name']),
+			'$title' => htmlspecialchars($stream['title']),
 			'$viewers' => $stream['viewer_count'],
 			'$img' => $imgurl
 		));
@@ -53,14 +47,16 @@ class TwitchStreams_Block {
 		return $output;
 	}
 
+	public const mainTemplate = '
+	<div class="tstr-main">
+		<!--<code>%s</code>-->
+		<div>%s</div>
+	</div>';
+
     static public function renderer(){
 		$twitch = TwitchStreams_TwitchAPI::get();
 		
-		$template = '
-		<div class="tstr-main">
-			<!--<code>%s</code>-->
-			<div>%s</div>
-		</div>';
+		$template = self::mainTemplate;
 		
 		$streams = get_transient(self::cache_key);
 		if($streams === false){
