@@ -35,6 +35,7 @@ if(!function_exists("do_action")){
 
 require_once("settings.php");
 require_once("block.php");
+require_once("shortcode.php");
 TwitchStreamsSettings::init()
 
 ?>
