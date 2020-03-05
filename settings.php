@@ -6,6 +6,8 @@ if(!function_exists("do_action")){
 }
 
 
+require_once("display.php");
+
 class TwitchStreamsSettings {
     static function init(){
         add_action("admin_menu", array("TwitchStreamsSettings", "addPage"));
@@ -69,50 +71,94 @@ class TwitchStreamsSettings {
                 'default' => false
             )
         );
+
+        register_setting(
+            'twitchstreams_settings',
+            'twitchstreams_streamtemplate',
+            array(
+                'default' => TwitchStreams_Display::streamTemplate
+            )
+        );
+        register_setting(
+            'twitchstreams_settings',
+            'twitchstreams_maintemplate',
+            array(
+                'default' => TwitchStreams_Display::mainTemplate
+            )
+        );
+
             
-        // register a new section in the "reading" page
+        // register twitch section
         add_settings_section(
-            'twitchstreams_section',
-            'Twitch Streams Settings Section',
-            array("TwitchStreamsSettings", "sectionRenderer"),
+            'twitchstreams_twitchsettings',
+            'Twitch Settings',
+            array("TwitchStreamsSettings", "twitchSectionRenderer"),
             'twitchstreams_settings'
         );
-    
-        // register a new field in the "twitchstreams_settings_section" section, inside the "reading" page
+        // register template section
+        add_settings_section(
+            'twitchstreams_templatesection',
+            'Templates',
+            array("TwitchStreamsSettings", "templateSectionRenderer"),
+            'twitchstreams_settings'
+        );
+
+        // register fields to twitch section
         add_settings_field(
             'twitchstreams_twitch_token',
             'Twitch Token',
             array("TwitchStreamsSettings", "twitchTokenRenderer"),
             'twitchstreams_settings',
-            'twitchstreams_section'
+            'twitchstreams_twitchsettings'
         );
         add_settings_field(
             'twitchstreams_channels',
             'Target Channels',
             array("TwitchStreamsSettings", "channelsRenderer"),
             'twitchstreams_settings',
-            'twitchstreams_section'
+            'twitchstreams_twitchsettings'
         );
         add_settings_field(
             'twitchstreams_streams_cache',
             'Streams Cache Time',
             array("TwitchStreamsSettings", "streamsCacheRenderer"),
             'twitchstreams_settings',
-            'twitchstreams_section'
+            'twitchstreams_twitchsettings'
         );
         add_settings_field(
             'twitchstreams_showoffline',
             'Show Offline Channels',
             array("TwitchStreamsSettings", "showOfflineRenderer"),
             'twitchstreams_settings',
-            'twitchstreams_section'
+            'twitchstreams_twitchsettings'
+        );
+
+        // register fields to template
+        add_settings_field(
+            'twitchstreams_maintemplate',
+            'Main Template',
+            array("TwitchStreamsSettings", "mainTemplateRenderer"),
+            'twitchstreams_settings',
+            'twitchstreams_templatesection'
+        );
+        add_settings_field(
+            'twitchstreams_streamtemplate',
+            'Stream Template',
+            array("TwitchStreamsSettings", "streamTemplateRenderer"),
+            'twitchstreams_settings',
+            'twitchstreams_templatesection'
         );
     }
 
-    static function sectionRenderer(){
+    static function twitchSectionRenderer(){
         // echo "<p>Twitch Stream Introduction</p>";
     }
 
+    static function templateSectionRenderer(){
+
+    }
+
+    // Twitch input renderers
     static function showOfflineRenderer(){
         $setting = get_option('twitchstreams_showoffline');
         ?>
@@ -129,7 +175,6 @@ class TwitchStreamsSettings {
 
     static function twitchTokenRenderer(){
         $setting = get_option('twitchstreams_twitch_token');
-        // output the field
         ?>
         <input type="text" class="regular-text" name="twitchstreams_twitch_token" value="<?php echo isset( $setting ) ? esc_attr( $setting ) : ''; ?>">
         <?php
@@ -137,9 +182,22 @@ class TwitchStreamsSettings {
 
     static function channelsRenderer(){
         $setting = get_option('twitchstreams_channels');
-        // output the field
         ?>
         <input type="text" class="regular-text" name="twitchstreams_channels" value="<?php echo isset( $setting ) ? esc_attr( $setting ) : ''; ?>">
+        <?php
+    }
+
+    // Template input renderers
+    static function streamTemplateRenderer(){
+        $setting = get_option('twitchstreams_streamtemplate');
+        ?>
+        <textarea rows="10" spellcheck="false" class="regular-text" name="twitchstreams_streamtemplate"><?php echo isset( $setting ) ? esc_attr( $setting ) : ''; ?></textarea>
+        <?php
+    }
+    static function mainTemplateRenderer(){
+        $setting = get_option('twitchstreams_maintemplate');
+        ?>
+        <textarea rows="10" spellcheck="false" class="regular-text" name="twitchstreams_maintemplate"><?php echo isset( $setting ) ? esc_attr( $setting ) : ''; ?></textarea>
         <?php
     }
 }

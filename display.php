@@ -13,17 +13,17 @@ if(!class_exists("TwitchStreams_Display")){
         private const cache_key = "twitchstreams_streams";
     
         const streamTemplate = '
-        <div class="tstr-stream">
-            <img src="$img" class="tstr-image">
-            <div class="tstr-midinfo">
-                <span class="tstr-title">$title</span><br>
-                <span class="tstr-username">$username</span>
-            </div>
-            <div class="tstr-viewers">$viewers</div>
-        </div>';
+<div class="tstr-stream">
+    <img src="$img" class="tstr-image">
+    <div class="tstr-midinfo">
+        <span class="tstr-title">$title</span><br>
+        <span class="tstr-username">$username</span>
+    </div>
+    <div class="tstr-viewers">$viewers</div>
+</div>';
     
         static private function renderStream($stream){
-            $template = self::streamTemplate;
+            $template = get_option('twitchstreams_streamtemplate', self::streamTemplate);
     
             $imgurl = strtr($stream["thumbnail_url"], array(
                 '{width}' => '192',
@@ -49,17 +49,15 @@ if(!class_exists("TwitchStreams_Display")){
         }
     
         public const mainTemplate = '
-        <div class="tstr-main">
-            <!--<code>%s</code>-->
-            <div>%s</div>
-        </div>';
+<div class="tstr-main">
+    <div>%s</div>
+</div>';
     
         static public function renderer(){
-            
-            $template = self::mainTemplate;
+            $template = get_option('twitchstreams_maintemplate', self::mainTemplate);
             
             $streams = TwitchStreams_Connector::streams(get_option("twitchstreams_channels"));
-            return sprintf($template, print_r($streams ,TRUE), self::renderStreams($streams));
+            return sprintf($template, self::renderStreams($streams));
         }
     }
 }
