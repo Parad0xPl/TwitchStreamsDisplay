@@ -48,7 +48,7 @@ class TwitchStreamsSettings {
     }
 
     static function registerOptions(){
-        // register a new setting for "reading" page
+        // register twitch settings
         register_setting(
             'twitchstreams_settings', 
             'twitchstreams_twitch_token');
@@ -72,11 +72,28 @@ class TwitchStreamsSettings {
             )
         );
 
+        // register template settings
+        register_setting(
+            'twitchstreams_settings', 
+            'twitchstreams_streamtemplatedefault',
+            array(
+                'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_bool'),
+                'default' => true
+            )
+        );
         register_setting(
             'twitchstreams_settings',
             'twitchstreams_streamtemplate',
             array(
                 'default' => TwitchStreams_Display::streamTemplate
+            )
+        );
+        register_setting(
+            'twitchstreams_settings', 
+            'twitchstreams_maintemplatedefault',
+            array(
+                'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_bool'),
+                'default' => true
             )
         );
         register_setting(
@@ -135,9 +152,23 @@ class TwitchStreamsSettings {
 
         // register fields to template
         add_settings_field(
+            'twitchstreams_maintemplatedefault',
+            'Use default main template?',
+            array("TwitchStreamsSettings", "mainDefaultRenderer"),
+            'twitchstreams_settings',
+            'twitchstreams_templatesection'
+        );
+        add_settings_field(
             'twitchstreams_maintemplate',
             'Main Template',
             array("TwitchStreamsSettings", "mainTemplateRenderer"),
+            'twitchstreams_settings',
+            'twitchstreams_templatesection'
+        );
+        add_settings_field(
+            'twitchstreams_streamtemplatedefault',
+            'Use default stream template?',
+            array("TwitchStreamsSettings", "streamDefaultRenderer"),
             'twitchstreams_settings',
             'twitchstreams_templatesection'
         );
@@ -198,6 +229,18 @@ class TwitchStreamsSettings {
         $setting = get_option('twitchstreams_maintemplate');
         ?>
         <textarea rows="10" spellcheck="false" class="regular-text" name="twitchstreams_maintemplate"><?php echo isset( $setting ) ? esc_attr( $setting ) : ''; ?></textarea>
+        <?php
+    }
+    static function mainDefaultRenderer(){
+        $setting = get_option('twitchstreams_maintemplatedefault');
+        ?>
+        <input name="twitchstreams_maintemplatedefault" type="checkbox" id="twitchstreams_maintemplatedefault" <?php if($setting) echo "checked" ?> value="true">
+        <?php
+    }
+    static function streamDefaultRenderer(){
+        $setting = get_option('twitchstreams_streamtemplatedefault');
+        ?>
+        <input name="twitchstreams_streamtemplatedefault" type="checkbox" id="twitchstreams_streamtemplatedefault" <?php if($setting) echo "checked" ?> value="true">
         <?php
     }
 }

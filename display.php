@@ -14,7 +14,7 @@ if(!class_exists("TwitchStreams_Display")){
     
         const streamTemplate = '
 <div class="tstr-stream">
-    <img src="$profile_image_url" class="tstr-image">
+    <img src="$avatarurl" class="tstr-image">
     <div class="tstr-midinfo">
         <span class="tstr-title">$title</span><br>
         <span class="tstr-username">$type</span>
@@ -23,7 +23,11 @@ if(!class_exists("TwitchStreams_Display")){
 </div>';
     
         static private function renderStream($stream, $transformed){
-            $template = get_option('twitchstreams_streamtemplate', self::streamTemplate);
+            if(get_option('twitchstreams_streamtemplatedefault') === "1"){
+                $template = self::streamTemplate;
+            }else{
+                $template = get_option('twitchstreams_streamtemplate', self::streamTemplate);
+            }
     
             $imgurl = strtr($stream["thumbnail_url"], array(
                 '{width}' => '192',
@@ -84,7 +88,11 @@ if(!class_exists("TwitchStreams_Display")){
 </div>';
     
         static public function renderer(){
-            $template = get_option('twitchstreams_maintemplate', self::mainTemplate);
+            if(get_option('twitchstreams_maintemplatedefault') === "1"){
+                $template = self::mainTemplate;
+            }else{
+                $template = get_option('twitchstreams_maintemplate', self::mainTemplate);
+            }
             
             $channels = get_option("twitchstreams_channels");
             $streams = TwitchStreams_Connector::streams($channels);
