@@ -27,7 +27,7 @@ if(!class_exists("TwitchStreams_Connector")){
                 $channels = explode(",", $rawchannels);
                 $response = $twitch->streams($channels);
                 if($response === null){
-                    return false;
+                    return null;
                 }
                 $streams = $response["data"];
                 set_transient(self::streams_key, array(
@@ -40,16 +40,54 @@ if(!class_exists("TwitchStreams_Connector")){
             return $streams;
         }
 
+        private const transformedusers_key = "twitchstreams_transformedusers";
+        static function transformedUsers($rawchannels){
+            $twitch = TwitchStreams_TwitchAPI::get();
+            $cached = get_transient(self::users_key);
+            $hash = self::hash($rawchannels);
+
+            $time = self::getTime() * 60;
+            if($time > 30*60){
+                $time = 30*60;
+            }
+
+            if($cached === false || $hash != $cached["hash"]){
+                $response = self::users($rawchannels);
+                if($response === null){
+                    return null;
+                }
+                $users = $response;
+                $transformed = array();
+                foreach($users as $user){
+                    $transformed[strval($user["id"])] = $user;
+                }
+                set_transient(self::users_key, array(
+                    'hash' => $hash,
+                    'users' => $transformed
+                ), $time);
+            }else{
+                $transformed = $cached["users"];
+            }
+            return $transformed;
+        }
+
         private const users_key = "twitchstreams_users";
         static function users($rawchannels){
             $twitch = TwitchStreams_TwitchAPI::get();
             $cached = get_transient(self::users_key);
             $hash = self::hash($rawchannels);
+
+            $time = self::getTime() * 60;
+            if($time > 30*60){
+                $time = 30*60;
+            }
+            $time -= 15;
+
             if($cached === false || $hash != $cached["hash"]){
                 $channels = explode(",", $rawchannels);
                 $response = $twitch->users($channels);
                 if($response === null){
-                    return false;
+                    return null;
                 }
                 $users = $response["data"];
                 set_transient(self::users_key, array(
