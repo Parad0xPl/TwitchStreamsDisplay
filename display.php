@@ -65,7 +65,7 @@ if(!class_exists("TwitchStreams_Display")){
     
         public const mainTemplate = '
 <div class="tstr-main">
-    <div>%s</div>
+    <div>$streams</div>
 </div>';
     
         static public function renderer(){
@@ -74,7 +74,10 @@ if(!class_exists("TwitchStreams_Display")){
             $channels = get_option("twitchstreams_channels");
             $streams = TwitchStreams_Connector::streams($channels);
             $transformed = TwitchStreams_Connector::transformedUsers($channels);
-            return sprintf($template, self::renderStreams($streams, $transformed));
+            // return sprintf($template, self::renderStreams($streams, $transformed));
+            return strtr($template, array(
+                '$streams' => self::renderStreams($streams, $transformed)
+            ));
         }
     }
 }
