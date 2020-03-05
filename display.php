@@ -55,9 +55,24 @@ if(!class_exists("TwitchStreams_Display")){
     
         static private function renderStreams($streams, $transformed){
             $output = "";
+            $onlineSet = array();
             if(is_array($streams)){
                 foreach($streams as $stream){
+                    $onlineSet[$stream["user_id"]] = true;
                     $output .= self::renderStream($stream, $transformed);
+                }
+            }
+            if(is_array($transformed) && get_option("twitchstreams_showoffline")){
+                foreach($transformed as $userid => $userdata){
+                    if(!array_key_exists($userid, $onlineSet)){
+                        $output .= self::renderStream(array(
+                            "user_id" => $userid,
+                            "user_name" => $userdata['display_name'],
+                            "title" => "Stream is offline",
+                            "thumbnail_url" => "",
+                            "viewer_count" => 0
+                        ), $transformed);
+                    }
                 }
             }
             return $output;
