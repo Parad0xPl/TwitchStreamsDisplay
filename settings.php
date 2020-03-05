@@ -31,13 +31,19 @@ class TwitchStreamsSettings {
         );
     }
 
-    static function sanitize_int($val){
+    static function sanitize_cacheTime($val){
         $val = absint($val);
         if($val < 5){
             $val = 10;
         }
         return $val;
     }
+
+    static function sanitize_int($val){
+        $val = intval($val);
+        return $val;
+    }
+
     static function sanitize_bool($val){
         if($val !== "true"){
             $val = false;
@@ -59,7 +65,7 @@ class TwitchStreamsSettings {
             'twitchstreams_settings', 
             'twitchstreams_streams_cache',
             array(
-                'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_int'),
+                'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_cacheTime'),
                 'default' => 10
             )
         );
@@ -69,6 +75,14 @@ class TwitchStreamsSettings {
             array(
                 'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_bool'),
                 'default' => false
+            )
+        );
+        register_setting(
+            'twitchstreams_settings', 
+            'twitchstreams_limit',
+            array(
+                'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_int'),
+                'default' => -1
             )
         );
 
@@ -149,6 +163,13 @@ class TwitchStreamsSettings {
             'twitchstreams_settings',
             'twitchstreams_twitchsettings'
         );
+        add_settings_field(
+            'twitchstreams_limit',
+            'Channels limit',
+            array("TwitchStreamsSettings", "limitRenderer"),
+            'twitchstreams_settings',
+            'twitchstreams_twitchsettings'
+        );
 
         // register fields to template
         add_settings_field(
@@ -215,6 +236,13 @@ class TwitchStreamsSettings {
         $setting = get_option('twitchstreams_channels');
         ?>
         <input type="text" class="regular-text" name="twitchstreams_channels" value="<?php echo isset( $setting ) ? esc_attr( $setting ) : ''; ?>">
+        <?php
+    }
+
+    static function limitRenderer(){
+        $setting = get_option('twitchstreams_limit');
+        ?>
+        <input type="number" class="regular-text" name="twitchstreams_limit" value="<?php echo isset( $setting ) ? esc_attr( $setting ) : ''; ?>">
         <?php
     }
 

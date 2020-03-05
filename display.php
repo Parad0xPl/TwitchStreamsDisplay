@@ -60,14 +60,24 @@ if(!class_exists("TwitchStreams_Display")){
         static private function renderStreams($streams, $transformed){
             $output = "";
             $onlineSet = array();
+            $counter = 0;
+            $limit = get_option("twitchstreams_limit");
             if(is_array($streams)){
                 foreach($streams as $stream){
+                    if($limit > 0 && $counter >= $limit){
+                        break;
+                    }
+                    $counter++;
                     $onlineSet[$stream["user_id"]] = true;
                     $output .= self::renderStream($stream, $transformed);
                 }
             }
             if(is_array($transformed) && get_option("twitchstreams_showoffline")){
                 foreach($transformed as $userid => $userdata){
+                    if($limit > 0 && $counter >= $limit){
+                        break;
+                    }
+                    $counter++;
                     if(!array_key_exists($userid, $onlineSet)){
                         $output .= self::renderStream(array(
                             "user_id" => $userid,
@@ -97,7 +107,6 @@ if(!class_exists("TwitchStreams_Display")){
             $channels = get_option("twitchstreams_channels");
             $streams = TwitchStreams_Connector::streams($channels);
             $transformed = TwitchStreams_Connector::transformedUsers($channels);
-            // return sprintf($template, self::renderStreams($streams, $transformed));
             return strtr($template, array(
                 '$streams' => self::renderStreams($streams, $transformed)
             ));
