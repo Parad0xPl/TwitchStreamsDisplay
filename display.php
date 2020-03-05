@@ -16,11 +16,36 @@ if(!class_exists("TwitchStreams_Display")){
             <?php
         }
 
+        static private function generateStreamTranslate($stream){
+            $imgurl = strtr($stream["thumbnail_url"], array(
+                '{width}' => '192',
+                '{height}' => '108'
+            ));
+
+            $translate = array(
+                '$username' => htmlspecialchars($stream['user_name']),
+                '$title' => htmlspecialchars($stream['title']),
+                '$viewers' => $stream['viewer_count'],
+                '$thumbnailurl' => $imgurl
+            );
+            return $translate;
+        }
+        
+        static private function generateUserdataTranslate($userdata){
+            $translate = array(
+                '$type' => htmlspecialchars($userdata['type']),
+                '$displayname' => htmlspecialchars($userdata['display_name']),
+                '$avatarurl' => $userdata['profile_image_url'],
+                '$offlinethumbnailurl' => $userdata['offline_image_url']
+            );
+            return $translate;
+        }
+
         private const cache_key = "twitchstreams_streams";
     
         const streamTemplate = '
 <div class="tstr-stream">
-    <img src="$thumbnail" class="tstr-image">
+    <img src="$thumbnailurl" class="tstr-image">
     <div class="tstr-midinfo">
         <span class="tstr-title">$title</span><br>
         <span class="tstr-username">$displayname</span>
@@ -35,29 +60,15 @@ if(!class_exists("TwitchStreams_Display")){
                 $template = get_option('twitchstreams_streamtemplate', self::streamTemplate);
             }
     
-            $imgurl = strtr($stream["thumbnail_url"], array(
-                '{width}' => '192',
-                '{height}' => '108'
-            ));
-    
             if($transformed !== null && array_key_exists($stream["user_id"], $transformed)){
                 $userdata = $transformed[$stream["user_id"]];
             }else{
                 $userdata = null;
             }
 
-            $translate = array(
-                '$username' => htmlspecialchars($stream['user_name']),
-                '$title' => htmlspecialchars($stream['title']),
-                '$viewers' => $stream['viewer_count'],
-                '$thumbnail' => $imgurl
-            );
+            $translate = self::generateStreamTranslate($stream);
             if($userdata !== null){
-                $translate = array_merge($translate, array(
-                    '$type' => htmlspecialchars($userdata['type']),
-                    '$displayname' => htmlspecialchars($userdata['display_name']),
-                    '$avatarurl' => htmlspecialchars($userdata['profile_image_url'])
-                ));
+                $translate = array_merge($translate, self::generateUserdataTranslate($userdata));
             }
             
             return strtr($template, $translate);
@@ -79,11 +90,7 @@ if(!class_exists("TwitchStreams_Display")){
                 $template = get_option('twitchstreams_offlinetemplate', self::offlineTemplate);
             }
 
-            $translate = array(
-                '$type' => htmlspecialchars($userdata['type']),
-                '$displayname' => htmlspecialchars($userdata['display_name']),
-                '$avatarurl' => htmlspecialchars($userdata['profile_image_url'])
-            );
+            $translate = self::generateUserdataTranslate($userdata);
             return strtr($template, $translate);
         }
     

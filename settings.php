@@ -60,13 +60,18 @@ class TwitchStreamsSettings {
             'twitchstreams_twitch_token');
         register_setting(
             'twitchstreams_settings', 
-            'twitchstreams_channels');
+            'twitchstreams_channels',
+            array(
+                'description' => "Comma separated list of channels"
+            )
+        );
         register_setting(
             'twitchstreams_settings', 
             'twitchstreams_streams_cache',
             array(
                 'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_cacheTime'),
-                'default' => 10
+                'default' => 15,
+                'description' => 'Time how long streams info should be cached. In seconds'
             )
         );
         register_setting(
@@ -74,7 +79,8 @@ class TwitchStreamsSettings {
             'twitchstreams_showoffline',
             array(
                 'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_bool'),
-                'default' => false
+                'default' => false,
+                'description' => 'Should offline channels be shown'
             )
         );
         register_setting(
@@ -82,7 +88,8 @@ class TwitchStreamsSettings {
             'twitchstreams_limit',
             array(
                 'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_int'),
-                'default' => -1
+                'default' => -1,
+                'description' => 'Channel limitation. Works only if greater then zero'
             )
         );
 
@@ -251,7 +258,21 @@ class TwitchStreamsSettings {
     }
 
     static function templateSectionRenderer(){
-
+        ?>
+        <h4 style="margin-bottom: 3px;">Variables Cheatsheet</h4>
+        <p class="description" style="white-space: pre;">    Main template:
+    - $streams
+    Streams only variable:
+    - $username
+    - $title
+    - $viewers
+    - $thumbnailurl
+    Offline and Stream:
+    - $type
+    - $displayname
+    - $avatarurl
+    - $offlinethumbnailurl</p>
+        <?php
     }
 
     // Twitch input renderers
