@@ -46,9 +46,9 @@ class TwitchStreamsSettings {
 
     static function sanitize_bool($val){
         if($val !== "true"){
-            $val = "";
+            $val = false;
         }else{
-            $val = "1";
+            $val = true;
         }
         return $val;
     }
@@ -74,7 +74,7 @@ class TwitchStreamsSettings {
             'twitchstreams_showoffline',
             array(
                 'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_bool'),
-                'default' => ""
+                'default' => false
             )
         );
         register_setting(
@@ -92,7 +92,7 @@ class TwitchStreamsSettings {
             'twitchstreams_streamtemplatedefault',
             array(
                 'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_bool'),
-                'default' => "1"
+                'default' => true
             )
         );
         register_setting(
@@ -107,7 +107,7 @@ class TwitchStreamsSettings {
             'twitchstreams_maintemplatedefault',
             array(
                 'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_bool'),
-                'default' => "1"
+                'default' => true
             )
         );
         register_setting(
@@ -122,7 +122,7 @@ class TwitchStreamsSettings {
             'twitchstreams_useofflinetemplate',
             array(
                 'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_bool'),
-                'default' => "1"
+                'default' => true
             )
         );
         register_setting(
@@ -130,7 +130,7 @@ class TwitchStreamsSettings {
             'twitchstreams_offlinetemplatedefault',
             array(
                 'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_bool'),
-                'default' => "1"
+                'default' => true
             )
         );
         register_setting(
@@ -256,7 +256,7 @@ class TwitchStreamsSettings {
 
     // Twitch input renderers
     static function showOfflineRenderer(){
-        $setting = get_option('twitchstreams_showoffline');
+        $setting = boolval(get_option('twitchstreams_showoffline'));
         ?>
         <input name="twitchstreams_showoffline" type="checkbox" id="twitchstreams_showoffline" <?php if($setting) echo "checked" ?> value="true">
         <?php
@@ -304,25 +304,25 @@ class TwitchStreamsSettings {
         <?php
     }
     static function mainDefaultRenderer(){
-        $setting = get_option('twitchstreams_maintemplatedefault');
+        $setting = boolval(get_option('twitchstreams_maintemplatedefault'));
         ?>
         <input name="twitchstreams_maintemplatedefault" type="checkbox" id="twitchstreams_maintemplatedefault" <?php if($setting) echo "checked" ?> value="true">
         <?php
     }
     static function streamDefaultRenderer(){
-        $setting = get_option('twitchstreams_streamtemplatedefault');
+        $setting = boolval(get_option('twitchstreams_streamtemplatedefault'));
         ?>
         <input name="twitchstreams_streamtemplatedefault" type="checkbox" id="twitchstreams_streamtemplatedefault" <?php if($setting) echo "checked" ?> value="true">
         <?php
     }
     static function useOfflineRenderer(){
-        $setting = get_option('twitchstreams_useofflinetemplate');
+        $setting = boolval(get_option('twitchstreams_useofflinetemplate'));
         ?>
         <input name="twitchstreams_useofflinetemplate" type="checkbox" id="twitchstreams_useofflinetemplate" <?php if($setting) echo "checked" ?> value="true">
         <?php
     }
     static function offlineDefaultRenderer(){
-        $setting = get_option('twitchstreams_offlinetemplatedefault');
+        $setting = boolval(get_option('twitchstreams_offlinetemplatedefault'));
         ?>
         <input name="twitchstreams_offlinetemplatedefault" type="checkbox" id="twitchstreams_offlinetemplatedefault" <?php if($setting) echo "checked" ?> value="true">
         <?php

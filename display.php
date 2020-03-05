@@ -29,7 +29,7 @@ if(!class_exists("TwitchStreams_Display")){
 </div>';
     
         static private function renderStream($stream, $transformed){
-            if(get_option('twitchstreams_streamtemplatedefault') === "1"){
+            if(boolval(get_option('twitchstreams_streamtemplatedefault'))){
                 $template = self::streamTemplate;
             }else{
                 $template = get_option('twitchstreams_streamtemplate', self::streamTemplate);
@@ -73,7 +73,7 @@ if(!class_exists("TwitchStreams_Display")){
 </div>';
 
         static private function renderOffline($userdata){
-            if(get_option('twitchstreams_offlinetemplatedefault') === "1"){
+            if(boolval(get_option('twitchstreams_offlinetemplatedefault'))){
                 $template = self::offlineTemplate;
             }else{
                 $template = get_option('twitchstreams_offlinetemplate', self::offlineTemplate);
@@ -92,7 +92,7 @@ if(!class_exists("TwitchStreams_Display")){
             $onlineSet = array();
             $counter = 0;
             $limit = get_option("twitchstreams_limit");
-            $useSeparateOffline = get_option("twitchstreams_useofflinetemplate") === "1";
+            $useSeparateOffline = boolval(get_option("twitchstreams_useofflinetemplate"));
 
             if(is_array($streams)){
                 foreach($streams as $stream){
@@ -104,7 +104,7 @@ if(!class_exists("TwitchStreams_Display")){
                     $output .= self::renderStream($stream, $transformed);
                 }
             }
-            if(is_array($transformed) && get_option("twitchstreams_showoffline") === "1"){
+            if(is_array($transformed) && boolval(get_option("twitchstreams_showoffline"))){
                 foreach($transformed as $userid => $userdata){
                     if($limit > 0 && $counter >= $limit){
                         break;
@@ -134,7 +134,7 @@ if(!class_exists("TwitchStreams_Display")){
 </div>';
     
         static public function renderer(){
-            if(get_option('twitchstreams_maintemplatedefault') === "1"){
+            if(boolval(get_option('twitchstreams_maintemplatedefault'))){
                 $template = self::mainTemplate;
             }else{
                 $template = get_option('twitchstreams_maintemplate', self::mainTemplate);
