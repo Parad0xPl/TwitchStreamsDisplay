@@ -10,14 +10,20 @@ require_once("connector.php");
 if(!class_exists("TwitchStreams_Display")){
     class TwitchStreams_Display {
 
+        static private function debug($var){
+            ?>
+            <code><?php echo var_dump($var) ?></code>
+            <?php
+        }
+
         private const cache_key = "twitchstreams_streams";
     
         const streamTemplate = '
 <div class="tstr-stream">
-    <img src="$avatarurl" class="tstr-image">
+    <img src="$thumbnail" class="tstr-image">
     <div class="tstr-midinfo">
         <span class="tstr-title">$title</span><br>
-        <span class="tstr-username">$type</span>
+        <span class="tstr-username">$displayname</span>
     </div>
     <div class="tstr-viewers">$viewers</div>
 </div>';
@@ -56,12 +62,38 @@ if(!class_exists("TwitchStreams_Display")){
             
             return strtr($template, $translate);
         }
+
+        const offlineTemplate = '
+<div class="tstr-stream">
+    <img src="$avatarurl" class="tstr-image">
+    <div class="tstr-midinfo">
+        <span class="tstr-title">$displayname</span><br>
+        <span class="tstr-username">$type</span>
+    </div>
+</div>';
+
+        static private function renderOffline($userdata){
+            if(get_option('twitchstreams_offlinetemplatedefault') === "1"){
+                $template = self::offlineTemplate;
+            }else{
+                $template = get_option('twitchstreams_offlinetemplate', self::offlineTemplate);
+            }
+
+            $translate = array(
+                '$type' => htmlspecialchars($userdata['type']),
+                '$displayname' => htmlspecialchars($userdata['display_name']),
+                '$avatarurl' => htmlspecialchars($userdata['profile_image_url'])
+            );
+            return strtr($template, $translate);
+        }
     
         static private function renderStreams($streams, $transformed){
             $output = "";
             $onlineSet = array();
             $counter = 0;
             $limit = get_option("twitchstreams_limit");
+            $useSeparateOffline = get_option("twitchstreams_useofflinetemplate") === "1";
+
             if(is_array($streams)){
                 foreach($streams as $stream){
                     if($limit > 0 && $counter >= $limit){
@@ -72,20 +104,24 @@ if(!class_exists("TwitchStreams_Display")){
                     $output .= self::renderStream($stream, $transformed);
                 }
             }
-            if(is_array($transformed) && get_option("twitchstreams_showoffline")){
+            if(is_array($transformed) && get_option("twitchstreams_showoffline") === "1"){
                 foreach($transformed as $userid => $userdata){
                     if($limit > 0 && $counter >= $limit){
                         break;
                     }
                     $counter++;
                     if(!array_key_exists($userid, $onlineSet)){
-                        $output .= self::renderStream(array(
-                            "user_id" => $userid,
-                            "user_name" => $userdata['display_name'],
-                            "title" => "Stream is offline",
-                            "thumbnail_url" => "",
-                            "viewer_count" => 0
-                        ), $transformed);
+                        if($useSeparateOffline){
+                            $output .= self::renderOffline($userdata);
+                        }else{
+                            $output .= self::renderStream(array(
+                                "user_id" => $userid,
+                                "user_name" => $userdata['display_name'],
+                                "title" => "Stream is offline",
+                                "thumbnail_url" => "",
+                                "viewer_count" => 0
+                            ), $transformed);
+                        }
                     }
                 }
             }
