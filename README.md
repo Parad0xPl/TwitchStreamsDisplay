@@ -1,0 +1,2 @@
+# Twitch streams display for Wordpress
+This is a simple plugin that shows a list of streams and their status(Online/Offline). It's more of a prototype as it was finally never used. You need to pass the Twitch API Key in the settings and list of channels. It was published more as a reference for a rewrite than for usage as it is not properly cached and needs some rework to not slow down one in hundreds of requests.
