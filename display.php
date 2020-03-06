@@ -150,6 +150,9 @@ if(!class_exists("TwitchStreams_Display")){
             $channels = get_option("twitchstreams_channels");
             $streams = TwitchStreams_Connector::streams($channels);
             $transformed = TwitchStreams_Connector::transformedUsers($channels);
+            if($streams === null || $transformed === null){
+                return '';
+            }
             return strtr($template, array(
                 '$streams' => self::renderStreams($streams, $transformed)
             ));
