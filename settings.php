@@ -57,11 +57,16 @@ class TwitchStreamsSettings {
         // register twitch settings
         register_setting(
             'twitchstreams_settings', 
-            'twitchstreams_twitch_token');
+            'twitchstreams_twitch_token',
+            array(
+                'type' => 'string'
+            )
+        );
         register_setting(
             'twitchstreams_settings', 
             'twitchstreams_channels',
             array(
+                'type' => 'string',
                 'description' => "Comma separated list of channels"
             )
         );
@@ -69,6 +74,7 @@ class TwitchStreamsSettings {
             'twitchstreams_settings', 
             'twitchstreams_streams_cache',
             array(
+                'type' => 'integer',
                 'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_cacheTime'),
                 'default' => 15,
                 'description' => 'Time how long streams info should be cached. In seconds'
@@ -78,6 +84,7 @@ class TwitchStreamsSettings {
             'twitchstreams_settings', 
             'twitchstreams_showoffline',
             array(
+                'type' => 'boolean',
                 'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_bool'),
                 'default' => false,
                 'description' => 'Should offline channels be shown'
@@ -87,6 +94,7 @@ class TwitchStreamsSettings {
             'twitchstreams_settings', 
             'twitchstreams_limit',
             array(
+                'type' => 'integer',
                 'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_int'),
                 'default' => -1,
                 'description' => 'Channel limitation. Works only if greater then zero'
@@ -98,6 +106,7 @@ class TwitchStreamsSettings {
             'twitchstreams_settings', 
             'twitchstreams_streamtemplatedefault',
             array(
+                'type' => 'boolean',
                 'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_bool'),
                 'default' => true
             )
@@ -106,6 +115,7 @@ class TwitchStreamsSettings {
             'twitchstreams_settings',
             'twitchstreams_streamtemplate',
             array(
+                'type' => 'string',
                 'default' => TwitchStreams_Display::streamTemplate
             )
         );
@@ -113,6 +123,7 @@ class TwitchStreamsSettings {
             'twitchstreams_settings', 
             'twitchstreams_maintemplatedefault',
             array(
+                'type' => 'boolean',
                 'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_bool'),
                 'default' => true
             )
@@ -121,6 +132,7 @@ class TwitchStreamsSettings {
             'twitchstreams_settings',
             'twitchstreams_maintemplate',
             array(
+                'type' => 'string',
                 'default' => TwitchStreams_Display::mainTemplate
             )
         );
@@ -128,6 +140,7 @@ class TwitchStreamsSettings {
             'twitchstreams_settings', 
             'twitchstreams_useofflinetemplate',
             array(
+                'type' => 'boolean',
                 'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_bool'),
                 'default' => true
             )
@@ -136,6 +149,7 @@ class TwitchStreamsSettings {
             'twitchstreams_settings', 
             'twitchstreams_offlinetemplatedefault',
             array(
+                'type' => 'boolean',
                 'sanitize_callback' => array('TwitchStreamsSettings', 'sanitize_bool'),
                 'default' => true
             )
@@ -144,6 +158,7 @@ class TwitchStreamsSettings {
             'twitchstreams_settings',
             'twitchstreams_offlinetemplate',
             array(
+                'type' => 'string',
                 'default' => TwitchStreams_Display::offlineTemplate
             )
         );
@@ -277,7 +292,7 @@ class TwitchStreamsSettings {
 
     // Twitch input renderers
     static function showOfflineRenderer(){
-        $setting = boolval(get_option('twitchstreams_showoffline'));
+        $setting = boolval(get_option('twitchstreams_showoffline', false));
         ?>
         <input name="twitchstreams_showoffline" type="checkbox" id="twitchstreams_showoffline" <?php if($setting) echo "checked" ?> value="true">
         <?php
@@ -325,25 +340,25 @@ class TwitchStreamsSettings {
         <?php
     }
     static function mainDefaultRenderer(){
-        $setting = boolval(get_option('twitchstreams_maintemplatedefault'));
+        $setting = boolval(get_option('twitchstreams_maintemplatedefault', true));
         ?>
         <input name="twitchstreams_maintemplatedefault" type="checkbox" id="twitchstreams_maintemplatedefault" <?php if($setting) echo "checked" ?> value="true">
         <?php
     }
     static function streamDefaultRenderer(){
-        $setting = boolval(get_option('twitchstreams_streamtemplatedefault'));
+        $setting = boolval(get_option('twitchstreams_streamtemplatedefault', true));
         ?>
         <input name="twitchstreams_streamtemplatedefault" type="checkbox" id="twitchstreams_streamtemplatedefault" <?php if($setting) echo "checked" ?> value="true">
         <?php
     }
     static function useOfflineRenderer(){
-        $setting = boolval(get_option('twitchstreams_useofflinetemplate'));
+        $setting = boolval(get_option('twitchstreams_useofflinetemplate', true));
         ?>
         <input name="twitchstreams_useofflinetemplate" type="checkbox" id="twitchstreams_useofflinetemplate" <?php if($setting) echo "checked" ?> value="true">
         <?php
     }
     static function offlineDefaultRenderer(){
-        $setting = boolval(get_option('twitchstreams_offlinetemplatedefault'));
+        $setting = boolval(get_option('twitchstreams_offlinetemplatedefault', true));
         ?>
         <input name="twitchstreams_offlinetemplatedefault" type="checkbox" id="twitchstreams_offlinetemplatedefault" <?php if($setting) echo "checked" ?> value="true">
         <?php

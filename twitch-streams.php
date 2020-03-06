@@ -5,7 +5,7 @@
 /*
 Plugin Name: Twitch Streams
 Description: Twitch stream display
-Version: 0.0.1
+Version: 0.1.0
 Author: Parad0x
 License: GPLv2 or later
 */
