@@ -7,6 +7,11 @@ if(!function_exists("do_action")){
 
 require_once("display.php");
 
-add_shortcode('twitchstreams', array("TwitchStreams_Display", "renderer"));
+function twitchstreams_shortcode(){
+    wp_enqueue_style("twitchstreams-mainstyle");
+    return TwitchStreams_Display::renderer();
+}
+
+add_shortcode('twitchstreams', "twitchstreams_shortcode");
 
 ?>
